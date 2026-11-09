@@ -1,0 +1,35 @@
+Your device. Your command.
+
+ADB Local Shell PRO puts a focused command workspace on your Android device. Pair with Android's built-in Wireless debugging, connect locally and run ADB shell commands without a computer, root access or a separate ADB helper app.
+
+A terminal that gets out of your way
+• Read command output as it arrives, with Unicode support and exit codes.
+• Copy output or export it as a text file to a location you choose.
+• Stop a running command and adjust text size for comfortable reading.
+• Work in a carefully designed dark interface with a dedicated layout for wider screens.
+
+Keep useful commands close
+• Start with commands for device information, battery reports, storage, memory, display settings, installed packages and recent logs.
+• Save your own named commands and find them with search and categories.
+• Load a saved command into the input field and review it before running.
+
+Pick up where you left off
+• Browse and search up to 100 recent commands.
+• Revisit output, exit status and execution time.
+• Export history, clear it whenever you like or disable future history saves.
+
+Local by design
+No advertising. No account. No analytics SDK. Pairing credentials and command history stay in the app's private storage. The app connects only to the device's loopback address. You choose whether to copy or export results. Android's Wireless debugging uses a paired, encrypted connection.
+
+Getting connected
+1. Connect to Wi-Fi and enable Developer options and Wireless debugging.
+2. Keep Settings and this app visible in split screen. Open Pair device with pairing code in Settings and enter its pairing port and code in the app.
+3. Return to the main Wireless debugging screen and enter its connection port. The pairing port and connection port are different.
+
+Requirements and limits
+Android 11 or newer and a device that supports Wireless debugging. A Wi-Fi connection is required for Android's Wireless debugging setup. Device manufacturer restrictions or network configuration can affect pairing. The app does not provide root or bypass Android permissions. Commands run with the access granted to Android's ADB shell user.
+
+This is a non-interactive command shell. Each command starts a fresh shell; persistent sessions and interactive terminal applications are not supported. Commands have a two-minute limit and a 1 MB output limit. The terminal displays the latest 64 KB; history stores up to 16 KB per command. Commands can change device settings or data: review them before execution. Stopping a command does not undo changes already made. Reconnect after a restart or when Android changes the debugging port.
+
+Developed by PT Deploy Dulu Pulang Nanti.
+Support: seandyadryan2@gmail.com

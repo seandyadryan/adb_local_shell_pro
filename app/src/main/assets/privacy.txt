@@ -1,0 +1,32 @@
+ADB Local Shell PRO — Privacy Policy
+Effective date: 8 November 2026
+Developer: PT Deploy Dulu Pulang Nanti
+Contact: seandyadryan2@gmail.com
+
+The app does not automatically collect or send your personal data to us. It contains no ads, analytics or third-party crash reporting SDK, and it requires no account.
+
+Local processing
+The app connects to Android's ADB service only at 127.0.0.1 on the same device. It processes the commands you enter and the output returned by Android. Output may contain device information, package names, logs or other sensitive information depending on the commands you choose. Commands can themselves instruct Android to access files, change settings or communicate over a network; those actions depend on the command you run.
+
+Local storage and retention
+An ADB private key is generated for this installation and stored in app-private storage excluded from Android backup. Pairing codes are used to complete pairing and are not written to app storage. The last connection port and text/history preferences are stored locally. Custom commands are kept until you remove them. If history is enabled, the app keeps up to 100 commands with timestamps, exit codes, execution time and up to 16 KB of output each. New entries replace older ones. You can turn off future history saving or clear existing history. Disabling history does not remove existing entries. Live terminal output stays in memory until cleared or the process ends.
+
+Permissions
+Internet permission permits the local ADB socket connection; network-state access supports network compatibility. There is no account, location, camera, microphone, contacts, advertising identifier or broad storage permission. Android's Wireless debugging authorization grants shell-level access for commands you choose. It does not grant root access.
+
+Your choices
+You can copy output to the Android clipboard or export text through Android's system document picker. Clipboard data and exported files are then handled by Android and the destination apps or providers you choose. Export destinations may include cloud storage. Such copies remain outside this app until you delete them there. Review sensitive output before copying, exporting or sending it.
+
+Deletion and revocation
+Clear history from the History tab and delete custom commands from the Commands tab. Clear this app's storage or uninstall it to remove its local data and pairing private key. To revoke Android's authorization, also remove ADB Local Shell PRO from Paired devices in Wireless debugging settings. Turn Wireless debugging off when not needed. Exported files and clipboard copies are not removed by uninstalling this app.
+
+Support and purchases
+If you email us, your email provider delivers your address and the content and attachments you choose to send. We use them to respond to support requests and retain them only as needed to handle the request and applicable obligations. Do not send pairing secrets or sensitive logs. Paid app purchases and refunds are handled by Google Play under Google's policies; the app does not receive or store payment card details.
+
+Children
+This developer tool is intended for users who understand Android debugging, and is not directed at children under 13. We do not knowingly collect children's personal data. Contact us if you believe a child has provided personal data by email.
+
+Security and changes
+App-private storage and paired Wireless debugging help protect local data, but no device or storage method guarantees absolute security. Devices with root access, compromised operating systems or exposed exports can present additional risks. We will update this policy if the app's data practices change and revise the effective date.
+
+For privacy requests, contact PT Deploy Dulu Pulang Nanti at seandyadryan2@gmail.com.

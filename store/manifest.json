@@ -1,0 +1,120 @@
+{
+  "short_description_characters": 78,
+  "full_description_characters": 2725,
+  "images": [
+    {
+      "file": "phone/01-shell.png",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 189705
+    },
+    {
+      "file": "phone/02-commands.png",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 205311
+    },
+    {
+      "file": "phone/03-connect.png",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 247250
+    },
+    {
+      "file": "phone/04-history.png",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 179760
+    },
+    {
+      "file": "phone/05-settings.png",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 221502
+    },
+    {
+      "file": "tablet-7/01-shell.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 206829
+    },
+    {
+      "file": "tablet-7/02-commands.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 171300
+    },
+    {
+      "file": "tablet-7/03-connect.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 205166
+    },
+    {
+      "file": "tablet-7/04-history.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 166491
+    },
+    {
+      "file": "tablet-10/01-shell.png",
+      "width": 2560,
+      "height": 1440,
+      "bytes": 316766
+    },
+    {
+      "file": "tablet-10/02-commands.png",
+      "width": 2560,
+      "height": 1440,
+      "bytes": 240806
+    },
+    {
+      "file": "tablet-10/03-connect.png",
+      "width": 2560,
+      "height": 1440,
+      "bytes": 307048
+    },
+    {
+      "file": "tablet-10/04-history.png",
+      "width": 2560,
+      "height": 1440,
+      "bytes": 220355
+    },
+    {
+      "file": "desktop/01-shell.png",
+      "width": 2560,
+      "height": 1440,
+      "bytes": 241718
+    },
+    {
+      "file": "desktop/02-commands.png",
+      "width": 2560,
+      "height": 1440,
+      "bytes": 203336
+    },
+    {
+      "file": "desktop/03-connect.png",
+      "width": 2560,
+      "height": 1440,
+      "bytes": 234322
+    },
+    {
+      "file": "desktop/04-history.png",
+      "width": 2560,
+      "height": 1440,
+      "bytes": 187918
+    },
+    {
+      "file": "artwork/app-icon-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 2937
+    },
+    {
+      "file": "artwork/feature-graphic-1024x500.png",
+      "width": 1024,
+      "height": 500,
+      "bytes": 89576
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+ADB Local Shell PRO — Application License
+
+Copyright (c) 2026 PT Deploy Dulu Pulang Nanti. All rights reserved.
+
+Except for the permissions below, the original application code, branding and
+artwork are proprietary. Publication of this repository does not grant a general
+right to redistribute, rebrand or sell the original application or its artwork.
+The copyright holder may sell or otherwise license the application separately.
+
+Third-party components retain their original licenses. In particular, the
+source-included SPAKE2 library in pairing-native/ is licensed under LGPL-3.0;
+its source, license, upstream revision and build instructions are provided there.
+The application license does not restrict the rights granted by that license.
+
+Recipients may use the provided application source and build scripts to rebuild
+and relink this application with a modified version of that LGPL-covered library,
+sign the resulting application with their own key, install it and use it. Reverse
+engineering for debugging modifications to the LGPL-covered library is permitted.
+No original developer signing key is required to rebuild or use such a version;
+uninstall the original package first if Android rejects a different signing key.
+Preserve third-party notices and applicable licenses in modified versions.
+
+No warranty is provided to the extent permitted by applicable law. This license
+does not limit rights or remedies that cannot lawfully be excluded.
+
+For other licensing requests: seandyadryan2@gmail.com
