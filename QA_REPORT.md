@@ -1,17 +1,15 @@
 # Release verification
 
-ADB Local Shell PRO 1.0.0 (version code 1) uses `com.deploydulupulangnanti.adblocalshellpro`. The minimum SDK is Android 11 / API 30, and the target is Android 16 / API 36.
+ADB Local Shell PRO 1.0.1 (version code 2) uses `com.deploydulupulangnanti.adblocalshellpro`. The minimum SDK is Android 11 / API 30, and the target is Android 16 / API 36.
 
 ## Android checks
 
 | Check | Result |
 | --- | --- |
-| Kotlin unit tests | Seven passed, including input limits, command review, UTF-8 packet boundaries and byte-safe truncation. |
-| Native SPAKE2 tests | Three passed, including valid exchanges, mismatched passwords and malformed peer data. |
-| Compose UI and local storage | Four passed. Tested navigation, loading a saved command without executing it, the landscape composer, and bounded history persistence and clearing. |
+| Kotlin unit tests | Ten passed. They cover input limits, command review, UTF-8 boundaries, malformed ADB frames, and the shell output budget. |
+| Upgrade with an existing pairing | A same-signer update of the installed 1.0.0 app connected with the previously authorized key. The stored PEM was unchanged after the test. |
 | Live Android shell | The secure Android 16 emulator paired with the system Wireless debugging service. The app ran `id` as the Android `shell` user with its ordinary app permissions. |
-| Stream behavior | Live checks covered Unicode, exit status 7, twelve short commands in succession, EOF on stdin, shell quoting, stopping a command, and running another command on the same connection. |
-| Exact signed release | The APK installed and opened on Android 16. A framework instrumentation probe paired the signed app with the Android system service over TLS. It verified `uid=2000`, Unicode, exit status 7, stdin EOF and twelve fast commands using the optimized production client. |
+| Stream behavior | Live checks covered Unicode, exit status 7, twelve short commands in succession, EOF on stdin, shell quoting, stopping a command, and running another command without re-pairing. |
 
 The emulator fixture uses shell permissions to prepare Android's pairing service. It drops those permissions before the application client pairs, connects and runs a command. The fixture runs only in the instrumentation APK.
 
@@ -19,9 +17,9 @@ The runtime checks use an x86_64 Android 16 emulator. Physical-device pairing, m
 
 ## Signed package checks
 
-The release APK and AAB passed signature verification. Bundletool validated the AAB and confirmed `PAGE_ALIGNMENT_16K`. `zipalign` validated the APK at 16 KB, and ELF inspection checked all eight native libraries across the four packaged ABIs. The APK is non-debuggable. Local release lint reported zero errors and 16 warnings.
+The release signing tasks reject either unsupported SDK in the runtime dependency graph. The GitHub workflow also inspects every DEX file in the APK and AAB for the removed SDKs and the former Android hidden API calls. The DEX check detected the bypass SDK in version 1.0.0 and passed on the 1.0.1 development APK.
 
-The release folder includes SHA-256 checksums and the detailed verification output.
+`tools/verify_release.py` checks release signatures, package and version metadata, DEX contents, Bundletool validation, and 16 KB alignment in the APK, AAB, and native libraries. The release folder includes SHA-256 checksums and the detailed verification output.
 
 ## Store media checks
 

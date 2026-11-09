@@ -24,7 +24,7 @@ The desktop images represent Android desktop/windowed usage. This project does n
 
 1. Install `tools/requirements.txt` into your Python environment.
 2. Build debug and instrumentation APKs. Install them on an isolated development emulator using `tools/device_qa.py install`.
-3. Enable an emulator-only ADB transport or pair to its Wireless debugging service. Capture each viewport with `device_qa.py capture --prefix phone`, `--prefix tablet7`, `--prefix tablet`, and `--prefix desktop`, supplying `--port` for the active local connection port. The capture test runs real read-only diagnostic commands and then records the UI.
+3. Pair with the emulator's Wireless debugging service. Capture each viewport with `device_qa.py capture --prefix phone`, `--prefix tablet7`, `--prefix tablet`, and `--prefix desktop`, supplying `--port` for the active local connection port. The capture test runs real read-only diagnostic commands and then records the UI.
 4. Run `python tools/create_store_assets.py --video` to render artwork, the contact sheet, validation manifest and video. Omit `--video` to regenerate images only.
 5. Inspect the contact sheet, full images and several video frames before upload. Raw captures may contain device model and diagnostic output; review them before generating a public store package.
 

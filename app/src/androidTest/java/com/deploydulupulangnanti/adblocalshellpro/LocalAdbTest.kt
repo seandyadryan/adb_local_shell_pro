@@ -9,14 +9,14 @@ import org.junit.Assume.assumeTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 
-/** Optional live integration: adb tcpip 5555, then pass -e liveAdb true to the test runner. */
+/** Optional integration against an already paired Wireless debugging connection. */
 @RunWith(AndroidJUnit4::class)
 class LocalAdbTest {
     @Test fun realShellExitUnicodeAndCancellation() = runBlocking {
         assumeTrue(InstrumentationRegistry.getArguments().getString("liveAdb") == "true")
         val engine = AdbEngine()
         try {
-            val port = InstrumentationRegistry.getArguments().getString("connectPort", "5555").toInt()
+            val port = requireNotNull(InstrumentationRegistry.getArguments().getString("connectPort")).toInt()
             assertTrue(engine.connect(port).isNotBlank())
             val output = StringBuilder()
             assertEquals(0, engine.execute("id") { output.append(it) })
@@ -36,6 +36,7 @@ class LocalAdbTest {
             val work = async(Dispatchers.IO) { runCatching { engine.execute("sleep 60") {} } }
             delay(1000); engine.stop()
             withTimeout(5000) { assertTrue(work.await().isFailure) }
+            assertTrue(engine.connected())
             output.clear()
             assertEquals(0, engine.execute("echo ready") { output.append(it) })
             assertEquals("ready", output.toString().trim())

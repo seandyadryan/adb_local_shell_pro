@@ -59,6 +59,7 @@ jobs:
         run: |
           chmod +x gradlew
           ./gradlew testDebugUnitTest lintRelease bundleRelease assembleRelease --console=plain
+          python3 tools/check_release_dex.py app/build/outputs/apk/release/app-release.apk app/build/outputs/bundle/release/app-release.aab
       - name: Package upload files
         id: package
         run: |

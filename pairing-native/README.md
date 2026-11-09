@@ -27,7 +27,5 @@ Export needed app data before uninstalling. No developer signing key or Play
 account is required. The root application license expressly permits these
 library modifications, debugging and relinking for your own use.
 
-The app replaces Kadb's transitive GPL SPAKE2 provider with this LGPL module.
-Its own bounded pairing adapter calls this module directly. Release optimization
-removes Kadb's unused pairing adapter. `:app:dependencies` verifies that the
-excluded provider is absent from the runtime dependency graph.
+The app's bounded pairing adapter calls this LGPL module directly. Bouncy Castle
+provides the TLS 1.3 exporter used to bind pairing to the authenticated transcript.

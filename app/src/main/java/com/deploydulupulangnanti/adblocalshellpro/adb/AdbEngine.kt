@@ -1,81 +1,83 @@
 package com.deploydulupulangnanti.adblocalshellpro.adb
 
-import com.flyfishxu.kadb.Kadb
-import com.flyfishxu.kadb.shell.AdbShellPacket
-import com.flyfishxu.kadb.shell.AdbShellStream
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import java.io.IOException
-import java.util.concurrent.atomic.AtomicReference
 
 class AdbEngine {
-    @Volatile private var client: Kadb? = null
-    private val activeStream = AtomicReference<AdbShellStream?>(null)
-    @Volatile private var stopped = false
-    @Volatile private var connecting: Kadb? = null
-    @Volatile private var pairing: WirelessPairing? = null
+    private val lock = Any()
+    private var endpoint: Int? = null
+    private var running: AdbWire? = null
+    private var connecting: AdbWire? = null
+    private var pairing: WirelessPairing? = null
 
-    suspend fun pair(port: Int, code: String) = withContext(Dispatchers.IO) {
-        AdbIdentity.ensureConfigured()
-        WirelessPairing().use { session ->
+    suspend fun pair(port: Int, code: String) {
+        val session = WirelessPairing()
+        synchronized(lock) {
+            check(pairing == null) { "Pairing already in progress." }
             pairing = session
-            try { session.pair(port, code) } finally { pairing = null }
+        }
+        try {
+            withContext(Dispatchers.IO) { session.pair(port, code) }
+        } finally {
+            session.close()
+            synchronized(lock) { if (pairing === session) pairing = null }
         }
     }
-    suspend fun connect(port: Int): String = withContext(Dispatchers.IO) {
-        AdbIdentity.ensureConfigured()
-        disconnect()
-        val candidate = Kadb.create("127.0.0.1", port, connectTimeout = 10000, socketTimeout = 120000)
-        connecting = candidate
+
+    suspend fun connect(port: Int): String {
+        val wire = synchronized(lock) {
+            check(running == null && connecting == null) { "ADB is busy." }
+            endpoint = null
+            AdbWire().also { connecting = it }
+        }
         try {
-            val identity = candidate.shell("id")
-            check(identity.exitCode == 0) { "The device did not return a shell identity." }
-            val model = candidate.shell("getprop ro.product.model").output.trim()
-            client = candidate
-            model.ifBlank { "Android device" }
-        } catch (e: Exception) { candidate.close(); throw e }
-        finally { connecting = null }
-    }
-    suspend fun execute(command: String, onOutput: (String) -> Unit): Int {
-        stopped = false
-        return withContext(Dispatchers.IO) {
-            val connection = checkNotNull(client) { "Connect to Wireless Debugging first." }
-            val stream = SingleAttemptShell.open(connection, command)
-            activeStream.set(stream)
-            try {
-                check(!stopped) { "Command stopped." }
-                val stdout = Utf8Stream()
-                val stderr = Utf8Stream()
-                var bytes = 0
-                while (true) {
-                    val packet = stream.read()
-                    if (packet !is AdbShellPacket.Exit) bytes += packet.payload.size
-                    check(bytes <= 1_048_576) { "Output limit reached (1 MB). Narrow the command and try again." }
-                    when (packet) {
-                        is AdbShellPacket.StdOut -> onOutput(stdout.decode(packet.payload))
-                        is AdbShellPacket.StdError -> onOutput(stderr.decode(packet.payload))
-                        is AdbShellPacket.Exit -> {
-                            onOutput(stdout.decode(byteArrayOf(), true) + stderr.decode(byteArrayOf(), true))
-                            return@withContext packet.payload[0].toUByte().toInt()
-                        }
-                    }
-                }
-                @Suppress("UNREACHABLE_CODE") 0
-            } finally {
-                if (activeStream.compareAndSet(stream, null)) closeStream(stream)
+            val model = withContext(Dispatchers.IO) {
+                val output = StringBuilder()
+                val exit = wire.execute(port, "getprop ro.product.model") { output.append(it) }
+                check(exit == 0) { "Android did not return a device model." }
+                output.toString().trim().ifBlank { "Android device" }
             }
+            synchronized(lock) {
+                check(connecting === wire && !wire.isClosed) { "Connection cancelled." }
+                endpoint = port
+            }
+            return model
+        } finally {
+            wire.close()
+            synchronized(lock) { if (connecting === wire) connecting = null }
         }
     }
-    private fun closeStream(stream: AdbShellStream) {
+
+    suspend fun execute(command: String, onOutput: (String) -> Unit): Int {
+        val (port, wire) = synchronized(lock) {
+            check(running == null && connecting == null) { "ADB is busy." }
+            val port = checkNotNull(endpoint) { "Connect to Wireless Debugging first." }
+            port to AdbWire().also { running = it }
+        }
         try {
-            stream.close()
-        } catch (_: IOException) {
-            // A closed transport cannot receive a final CLSE frame.
+            return withContext(Dispatchers.IO) { wire.execute(port, command, onOutput) }
+        } catch (error: Exception) {
+            synchronized(lock) {
+                // A deliberate stop closes only this command. A transport failure needs a reconnect.
+                if (running === wire && !wire.isClosed && error !is AdbOutputLimit) endpoint = null
+            }
+            throw error
+        } finally {
+            wire.close()
+            synchronized(lock) { if (running === wire) running = null }
         }
     }
-    fun stop() { stopped = true; activeStream.getAndSet(null)?.let(::closeStream) }
-    fun cancelPairing() { pairing?.close() }
-    fun cancelConnect() { connecting?.close() }
-    fun disconnect() { stop(); cancelPairing(); connecting?.close(); connecting = null; client?.close(); client = null }
-    fun connected(): Boolean = client?.connectionCheck() == true
+
+    fun stop() = synchronized(lock) { running?.close(); Unit }
+    fun cancelPairing() = synchronized(lock) { pairing?.close(); Unit }
+    fun cancelConnect() = synchronized(lock) { connecting?.close(); Unit }
+
+    fun disconnect() = synchronized(lock) {
+        endpoint = null
+        running?.close()
+        connecting?.close()
+        pairing?.close()
+    }
+
+    fun connected(): Boolean = synchronized(lock) { endpoint != null }
 }

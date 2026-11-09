@@ -52,9 +52,11 @@ if __name__=='__main__':
     parser=argparse.ArgumentParser()
     parser.add_argument('action',choices=['install','test','native','capture','screen','wireless-info','open-wireless'])
     parser.add_argument('--serial',default='emulator-5554')
-    parser.add_argument('--port',default='5555')
+    parser.add_argument('--port')
     parser.add_argument('--prefix',default='phone')
     args=parser.parse_args(); SERIAL=args.serial
+    if args.action in ('test','capture') and not args.port:
+        parser.error('--port is required for the paired Wireless debugging connection')
     if not SERIAL.startswith('emulator-'): raise RuntimeError('Only an explicitly selected emulator is allowed by this QA script.')
     qa=ROOT/'output/qa'; qa.mkdir(parents=True,exist_ok=True)
     if args.action=='install':

@@ -55,7 +55,8 @@ The workflow tests, runs release lint, builds signed APK/AAB, uploads artifacts 
 - Direct ADB shell user access, without root. No automatic privileged changes.
 - Non-interactive, separate shell for every command. Use `cd /path && command` within a single command. No persistent environment or full-screen terminal programs.
 - Streaming stdout/stderr with UTF-8 packet handling, exit status, stop and export.
-- Commands are attempted once; a transport failure never automatically replays a command. The pinned Kadb adapter selects its no-retry OPEN path.
+- Each command opens one TLS transport to the configured Wireless debugging port. Transport failures surface to the user without replaying a command.
+- ADB framing is implemented in Kotlin. Bouncy Castle provides TLS 1.3 and the pairing exporter through its public library API. The update reads the existing local RSA identity.
 - Two-minute command timeout and 1 MB total output limit; latest 64 KB displayed.
 - Ten starter commands, search, categories and up to 100 custom commands.
 - Optional history: latest 100 records, up to 16 KB output per entry. Disable future saves or clear existing history.
@@ -72,7 +73,7 @@ Some recognized modifying commands request additional review. This is a convenie
 
 Core tests cover input boundaries and every UTF-8 split boundary. Instrumentation checks navigation and saving/loading a command without executing it. Optional integration tests use explicit instrumentation arguments:
 
-- `LocalAdbTest`: `liveAdb=true`, `connectPort`, with an already authorized isolated emulator transport (defaults to port 5555).
+- `LocalAdbTest`: `liveAdb=true`, `connectPort`, with an already paired isolated emulator using Wireless debugging.
 - `WirelessAdbTest`: `pairPort`, `pairCode`, `connectPort`, with the system pairing dialog open.
 - `EmulatorWirelessTest`: `wirelessFixture=true`, secure emulator only. Delegated shell permissions configure the Android system pairing service, then are dropped before the production client pairs and executes commands. The test reports the paired TLS connection port.
 - `StoreCaptureTest`: `captureStore=true`, `connectPort`, `capturePrefix`; captures real UI after executing live diagnostic commands. Skipped in ordinary test runs.

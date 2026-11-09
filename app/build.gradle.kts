@@ -1,4 +1,5 @@
 import java.util.Properties
+import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 
 plugins {
     id("com.android.application")
@@ -20,8 +21,8 @@ android {
         applicationId = "com.deploydulupulangnanti.adblocalshellpro"
         minSdk = 30
         targetSdk = 36
-        versionCode = 1
-        versionName = "1.0.0"
+        versionCode = 2
+        versionName = "1.0.1"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
@@ -46,13 +47,27 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
     buildFeatures { compose = true; buildConfig = true }
-    packaging { resources.excludes += setOf("META-INF/AL2.0", "META-INF/LGPL2.1", "META-INF/INDEX.LIST", "META-INF/*.SF", "META-INF/*.DSA", "META-INF/*.RSA") }
+    packaging {
+        resources.excludes += setOf("META-INF/AL2.0", "META-INF/LGPL2.1", "META-INF/INDEX.LIST", "META-INF/*.SF", "META-INF/*.DSA", "META-INF/*.RSA")
+        resources.merges += "META-INF/LICENSE.md"
+    }
     testOptions { unitTests.isReturnDefaultValues = true }
 }
 
 kotlin { compilerOptions { jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17) } }
 
+val verifyReleaseSdks by tasks.registering {
+    doLast {
+        val blocked = setOf("org.lsposed.hiddenapibypass:hiddenapibypass", "com.flyfishxu:kadb")
+        val found = configurations.getByName("releaseRuntimeClasspath").incoming.resolutionResult.allComponents
+            .mapNotNull { (it.id as? ModuleComponentIdentifier)?.let { module -> "${module.group}:${module.module}" } }
+            .filter { it in blocked }
+        check(found.isEmpty()) { "Unsupported SDK in release dependency graph: $found" }
+    }
+}
+
 tasks.matching { it.name == "packageRelease" || it.name == "signReleaseBundle" }.configureEach {
+    dependsOn(verifyReleaseSdks)
     doFirst { check(signingReady) { "Release signing is missing. Configure keystore.properties or signing environment variables." } }
 }
 
@@ -64,10 +79,9 @@ dependencies {
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.ui:ui-tooling-preview")
     debugImplementation("androidx.compose.ui:ui-tooling")
-    implementation("com.flyfishxu:kadb:2.1.1") { exclude(group = "com.github.Flyfish233", module = "spake2-java") }
     implementation(project(":pairing-native"))
-    implementation("org.bouncycastle:bcprov-jdk18on:1.83")
-    implementation("org.lsposed.hiddenapibypass:hiddenapibypass:6.1")
+    implementation("org.bouncycastle:bcpkix-jdk18on:1.86")
+    implementation("org.bouncycastle:bctls-jdk18on:1.86")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.3.0")
